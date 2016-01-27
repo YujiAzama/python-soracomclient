@@ -1,0 +1,2 @@
+setuptools
+cliff>=1.15.0
