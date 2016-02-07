@@ -16,6 +16,7 @@
 import time
 
 from soracomclient.v1_0.auth import Auth
+from soracomclient.v1_0.credential import Credential
 from soracomclient.v1_0.event_handler import EventHandler
 from soracomclient.v1_0.group import Group
 from soracomclient.v1_0.operator import Operator
@@ -29,6 +30,7 @@ class Client(object):
 
     def __init__(self, email, password, timeout=86400):
         self.auth = Auth(email=email, password=password, timeout=timeout)
+        self.credential = Credential(self.auth)
         #self.operator = Operator(self.auth)
         self.group = Group(self.auth)
         self.stats = Stats(self.auth)
@@ -231,4 +233,20 @@ class Client(object):
             operator_id = self.auth.operator_id
         status, body = self.stats.export_beam_usage(operator_id, from_unixtime,
                                                     to_unixtime, period)
+        return body
+
+    def list_credentials(self):
+        """List credentials."""
+        status, body = self.credential.list_credentials()
+        return body
+
+    def create_credential(self, credentials_id, credentials):
+        """Create credential."""
+        status, body = self.credential.create_credential(credentials_id,
+                                                         credentials)
+        return body
+    
+    def delete_credential(self, credentials_id):
+        """Delete credential."""
+        status, body = self.credential.delete_credential(credentials_id)
         return body
