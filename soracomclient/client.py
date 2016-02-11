@@ -46,9 +46,7 @@ class ClientBase(object):
         return headers
 
     def _parse_response(self, status, reply_body):
-        if reply_body == "":
-            reply_body = json.loads(reply_body)
-        return status, reply_body
+        return status, json.loads(reply_body)
 
     def do_request(self, method, action, body=None, headers=None, params=None):
         status, reply_body = self.httpclient.do_request(action, method,

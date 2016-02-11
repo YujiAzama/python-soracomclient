@@ -62,5 +62,5 @@ class Auth(ClientBase):
         if timeout:
             body["tokenTimeoutSeconds"] = timeout
         response, body = self.post(self.path, body=body)
-        body = json.loads(body)
+        #body = json.loads(body)
         return body['apiKey'], body['operatorId'], body['token']
