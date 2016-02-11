@@ -23,44 +23,42 @@ class Auth(ClientBase):
     path = "/auth"
 
     def __init__(self, email, password, api_key=None, operator_id=None,
-                 token=None, timeout=None):
+                 token=None, timeout=86400):
         super(Auth, self).__init__(api_key, token)
-        self._email = email
-        self._password = password
+        self._auth = {'email': email,
+                      'password': password,
+                      'timeout': timeout}
         if api_key is None:
-            self._api_key, self._operator_id, self._token = self.auth(email,
-                                                                      password,
-                                                                      timeout)
+            self._auth = self.auth(self._auth)
         else:
-            self._api_key = api_key
-            self._operator_id = operator_id
-            self._token = token
+            self._auth['apiKey'] = api_key
+            self._auth['operatorId'] = operator_id
+            self._auth['token'] = token
 
     @property
     def email(self):
-        return self._email
+        return self._auth['email']
 
     @property
     def password(self):
-        return self._password
+        return self._auth['password']
 
     @property
     def api_key(self):
-        return self._api_key
+        return self._auth['apiKey']
 
     @property
     def operator_id(self):
-        return self._operator_id
+        return self._auth['operatorId']
 
     @property
     def token(self):
-        return self._token
+        return self._auth['token']
 
-    def auth(self, email, password, timeout):
-        body = {"email": email,
-                "password": password}
-        if timeout:
-            body["tokenTimeoutSeconds"] = timeout
-        response, body = self.post(self.path, body=body)
-        #body = json.loads(body)
-        return body['apiKey'], body['operatorId'], body['token']
+    def auth(self, auth):
+        body = {'email': auth['email'],
+                'password': auth['password'],
+                'tokenTimeoutSeconds': auth['timeout']}
+        status, response = self.post(self.path, body=body)
+        auth.update(response)
+        return auth
