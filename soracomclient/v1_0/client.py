@@ -22,6 +22,7 @@ from soracomclient.v1_0.group import Group
 from soracomclient.v1_0.operator import Operator
 from soracomclient.v1_0.stats import Stats
 from soracomclient.v1_0.subscriber import Subscriber
+from soracomclient.v1_0.user import User
 
 
 class Client(object):
@@ -31,10 +32,10 @@ class Client(object):
     def __init__(self, email, password, timeout=86400):
         self.auth = Auth(email=email, password=password, timeout=timeout)
         self.credential = Credential(self.auth)
-        #self.operator = Operator(self.auth)
         self.group = Group(self.auth)
         self.stats = Stats(self.auth)
         self.subscriber = Subscriber(self.auth)
+        self.user = User(self.auth)
 
     def auth(self):
         return Auth(self.auth)
@@ -44,7 +45,7 @@ class Client(object):
                          speed_class_filter=None, limit=None,
                          last_evaluated_key=None):
         """List subscribers."""
-        status, body =  self.subscriber.list_subscribers(
+        status, body = self.subscriber.list_subscribers(
             tag_name=tag_name, tag_value=tag_value,
             tag_value_match_mode=tag_value_match_mode,
             status_filter=status_filter,
@@ -121,7 +122,7 @@ class Client(object):
         return body
 
     def list_groups(self, group_id=None, tag_name=None, tag_value=None,
-                    limit=None,tag_value_match_mode=None,
+                    limit=None, tag_value_match_mode=None,
                     last_evaluated_key=None):
         """List groups."""
 
@@ -131,6 +132,7 @@ class Client(object):
             tag_value_match_mode=tag_value_match_mode,
             last_evaluated_key=last_evaluated_key)
         return body
+
     def create_group(self, tags=None):
         """Create group."""
         status, body = self.group.create_group(tags)
@@ -154,7 +156,7 @@ class Client(object):
         status, body = self.group.update_group_configuration(
             group_id=group_id, namespace=namespace, params=params)
         return body
-    
+
     def delete_group_configuration(self, group_id, namespace, name):
         """Delete group configuration parameters."""
         status, body = self.group.delete_group_configuration(
@@ -219,7 +221,7 @@ class Client(object):
                          from_unixtime=int(time.time() - 24 * 60 * 60 * 30),
                          to_unixtime=int(time.time()), period="day"):
         """Export air usage report of all subscribers."""
-        if operator_id == None:
+        if operator_id is None:
             operator_id = self.auth.operator_id
         status, body = self.stats.export_air_usage(operator_id, from_unixtime,
                                                    to_unixtime, period)
@@ -229,7 +231,7 @@ class Client(object):
                           from_unixtime=int(time.time() - 24 * 60 * 60 * 30),
                           to_unixtime=int(time.time()), period="day"):
         """Export beam usage report of all subscribers."""
-        if operator_id == None:
+        if operator_id is None:
             operator_id = self.auth.operator_id
         status, body = self.stats.export_beam_usage(operator_id, from_unixtime,
                                                     to_unixtime, period)
@@ -245,8 +247,79 @@ class Client(object):
         status, body = self.credential.create_credential(credentials_id,
                                                          credentials)
         return body
-    
+
     def delete_credential(self, credentials_id):
         """Delete credential."""
         status, body = self.credential.delete_credential(credentials_id)
+        return body
+
+    def list_users(self):
+        """List users."""
+        status, body = self.user.list_users()
+        return body
+
+    def delete_user(self, username):
+        """Delete user."""
+        status, body = self.user.delete_user(username)
+        return body
+
+    def get_user(self, username):
+        """Get user."""
+        status, body = self.user.get_user(username)
+        return body
+
+    def create_user(self, username, description=""):
+        """Create user."""
+        status, body = self.user.create_user(username, description)
+        return body
+
+    def update_user(self, username, description=""):
+        """Update user."""
+        status, body = self.user.update_user(username, description)
+        return body
+
+    def list_user_auth_keys(self, username):
+        """List user auth keys."""
+        status, body = self.user.list_user_auth_keys(username)
+        return body
+
+    def generate_user_auth_key(self, username):
+        """Generate auth key."""
+        status, body = self.user.generate_user_auth_key(username)
+        return body
+
+    def delete_user_auth_key(self, username, auth_key_id):
+        """Delete user auth key."""
+        status, body = self.user.delete_user_auth_key(username, auth_key_id)
+        return body
+
+    def get_user_auth_key(self, username, auth_key_id):
+        """Get auth key."""
+        status, body = self.user.get_user_auth_key(username, auth_key_id)
+        return body
+
+    def delete_user_password(self, username):
+        """Delete password."""
+        status, body = self.user.delete_user_password(username)
+        return body
+
+    def has_user_password(self, username):
+        """Has user password."""
+        status, body = self.user.has_user_password(username)
+        return body
+
+    def create_user_password(self, username, password):
+        """Create password."""
+        status, body = self.user.create_user_password(username, password)
+        return body
+
+    def get_user_permission(self, username):
+        """Get user permission."""
+        status, body = self.user.get_user_permission(username)
+        return body
+
+    def update_user_permission(self, username, permission="", description=""):
+        """Update permission to user."""
+        status, body = self.user.update_user_permission(username, permission,
+                                                        description)
         return body
