@@ -20,6 +20,7 @@ from soracomclient.v1_0.credential import Credential
 from soracomclient.v1_0.event_handler import EventHandler
 from soracomclient.v1_0.group import Group
 from soracomclient.v1_0.operator import Operator
+from soracomclient.v1_0.role import Role
 from soracomclient.v1_0.stats import Stats
 from soracomclient.v1_0.subscriber import Subscriber
 from soracomclient.v1_0.user import User
@@ -33,6 +34,7 @@ class Client(object):
         self.auth = Auth(email=email, password=password, timeout=timeout)
         self.credential = Credential(self.auth)
         self.group = Group(self.auth)
+        self.role = Role(self.auth)
         self.stats = Stats(self.auth)
         self.subscriber = Subscriber(self.auth)
         self.user = User(self.auth)
@@ -322,4 +324,49 @@ class Client(object):
         """Update permission to user."""
         status, body = self.user.update_user_permission(username, permission,
                                                         description)
+        return body
+
+    def list_roles(self):
+        """List roles."""
+        status, body = self.role.list_roles()
+        return body
+
+    def delete_role(self, role_id):
+        """Delete role."""
+        status, body = self.role.delete_role(role_id)
+        return body
+
+    def get_role(self, role_id):
+        """Get role."""
+        status, body = self.role.get_role(role_id)
+        return body
+
+    def create_role(self, role_id, permission, description=""):
+        """Create role."""
+        status, body = self.role.create_role(role_id, permission, description)
+        return body
+
+    def update_role(self, role_id, permission, description=""):
+        """Update role."""
+        status, body = self.role.update_role(role_id, permission, description)
+        return body
+
+    def list_role_attached_users(self, role_id):
+        """List role attached users."""
+        status, body = self.role.list_role_attached_users(role_id)
+        return body
+
+    def list_user_roles(self, username):
+        """List user roles."""
+        status, body = self.role.list_user_roles(username)
+        return body
+
+    def attach_role_to_user(self, username, role_id):
+        """Attach role to user."""
+        status, body = self.role.attach_role_to_user(username, role_id)
+        return body
+
+    def detach_role_from_user(self, username, role_id):
+        """Detach role from user."""
+        status, body = self.role.detach_role_from_user(username, role_id)
         return body
